@@ -447,6 +447,7 @@ func (c *Client) signObject(accountKey interface{}, v interface{}) (string, erro
 
 		switch bitLen {
 		case 2048:
+		case 4096:
 			alg = jose.RS256
 		// Not yet supported by LetsEncrypt's Boulder service: https://github.com/letsencrypt/boulder/issues/1592
 		// case 3072:
