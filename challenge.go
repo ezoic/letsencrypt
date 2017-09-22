@@ -193,7 +193,7 @@ func (c *Client) ChallengeReady(accountKey interface{}, chal Challenge) error {
 			if chal.Type == ChallengeDNS {
 				// unauthorized is the TXT value is wrong or not found
 				// connection if NXDOMAIN
-				if chal.Error.Typ == "urn:acme:error:unauthorized" || chal.Error.Typ == "urn:acme:error:connection" {
+				if chal.Error.Typ == "urn:acme:error:unauthorized" || (chal.Error.Typ == "urn:acme:error:connection" && !strings.HasPrefix(chal.Error.Detail, "CAA record for")) {
 					time.Sleep(pollInterval)
 					continue
 				}
