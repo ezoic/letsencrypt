@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/ezoic/letsencrypt/internal/base64"
-	"github.com/square/go-jose"
+	jose "gopkg.in/square/go-jose.v1"
 )
 
 const (
@@ -148,7 +148,7 @@ func (c *Client) ChallengeReady(accountKey interface{}, chal Challenge) error {
 		Type     string `json:"type"`
 		Token    string `json:"token"`
 	}{resourceChallenge, auth, chal.Type, chal.Token}
-	sig, err := c.signObject(accountKey, &data)
+	sig, err := c.SignObject(accountKey, &data)
 	if err != nil {
 		return err
 	}
