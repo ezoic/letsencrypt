@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/ezoic/letsencrypt/internal/base64"
-	"github.com/square/go-jose"
+	jose "gopkg.in/square/go-jose.v1"
 )
 
 const jwsContentType = "application/jose+jws"
@@ -191,7 +191,7 @@ func (c *Client) NewRegistration(accountKey interface{}) (reg Registration, err 
 
 func (c *Client) registration(accountKey interface{}, reg Registration, resource, url string) (Registration, error) {
 	reg.Resource = resource
-	sig, err := c.signObject(accountKey, &reg)
+	sig, err := c.SignObject(accountKey, &reg)
 	if err != nil {
 		return Registration{}, err
 	}
@@ -244,7 +244,7 @@ func (c *Client) NewAuthorization(accountKey interface{}, typ, val string) (auth
 		resourceNewAuthorization,
 		Identifier{typ, val},
 	}
-	payload, err := c.signObject(accountKey, &data)
+	payload, err := c.SignObject(accountKey, &data)
 	if err != nil {
 		return auth, "", err
 	}
@@ -315,7 +315,7 @@ func (c *Client) NewCertificate(accountKey interface{}, csr *x509.CertificateReq
 		resourceNewCertificate,
 		base64.RawURLEncoding.EncodeToString(csr.Raw),
 	}
-	data, err := c.signObject(accountKey, &payload)
+	data, err := c.SignObject(accountKey, &payload)
 	if err != nil {
 		return nil, err
 	}
@@ -379,7 +379,7 @@ func (c *Client) RevokeCertificate(accountKey interface{}, pemBytes []byte) erro
 		resourceNewRevokeCertificate,
 		encoded,
 	}
-	data, err := c.signObject(accountKey, &payload)
+	data, err := c.SignObject(accountKey, &payload)
 	if err != nil {
 		return err
 	}
@@ -433,7 +433,7 @@ func handleCertificateResponse(resp *http.Response) (*CertificateResponse, error
 }
 
 // TODO: doesn't need to be a function on the client struct
-func (c *Client) signObject(accountKey interface{}, v interface{}) (string, error) {
+func (c Client) SignObject(accountKey interface{}, v interface{}) (string, error) {
 	var (
 		signer jose.Signer
 		alg    jose.SignatureAlgorithm
